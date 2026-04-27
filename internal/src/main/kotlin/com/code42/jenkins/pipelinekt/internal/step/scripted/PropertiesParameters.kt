@@ -11,8 +11,6 @@ import java.io.StringWriter
 
 /**
  * Emits `properties([ parameters([ ... ]) ])` using [Parameter.toGroovy] lines (comma-separated).
- * Prefer nesting inside [com.code42.jenkins.pipelinekt.internal.step.declarative.Script] so scripted
- * children are not each wrapped in their own `script { }` block.
  */
 data class PropertiesParameters(val parameters: List<Parameter>) : ScriptedStep, SingletonStep {
     override fun scriptedGroovy(writer: GroovyWriter) {
