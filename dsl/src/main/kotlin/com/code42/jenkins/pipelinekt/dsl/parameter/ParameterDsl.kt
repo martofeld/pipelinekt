@@ -10,12 +10,12 @@ import com.code42.jenkins.pipelinekt.internal.parameters.Password
 import com.code42.jenkins.pipelinekt.internal.parameters.StringParam
 import com.code42.jenkins.pipelinekt.internal.parameters.Text
 
-fun DslContext<Parameter>.string(name: String, defaultValue: String, description: String) {
-    string(name.strDouble(), defaultValue.strDouble(), description.strDouble())
+fun DslContext<Parameter>.string(name: String, defaultValue: String, description: String, trim: Boolean = false) {
+    string(name.strDouble(), defaultValue.strDouble(), description.strDouble(), trim)
 }
 
-fun DslContext<Parameter>.string(name: Var.Literal.Str, defaultValue: Var.Literal.Str, description: Var.Literal.Str) {
-    add(StringParam(defaultValue, description, name))
+fun DslContext<Parameter>.string(name: Var.Literal.Str, defaultValue: Var.Literal.Str, description: Var.Literal.Str, trim: Boolean = false) {
+    add(StringParam(defaultValue, description, name, trim))
 }
 
 fun DslContext<Parameter>.text(name: String, defaultValue: String, description: String) {
