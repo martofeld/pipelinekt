@@ -15,12 +15,14 @@ data class ArchiveArtifacts(
     val artifacts: Var.Literal.Str,
     val fingerprint: Boolean = false,
     val allowEmptyArchive: Boolean = false,
+    val onlyIfSuccessful: Boolean = false,
 ) : DeclarativeStep, SingletonStep {
     override fun toGroovy(writer: GroovyWriter) {
         writer.writeln(
             "archiveArtifacts artifacts: ${artifacts.toGroovy()}, " +
                 "fingerprint: $fingerprint, " +
-                "allowEmptyArchive: $allowEmptyArchive",
+                "allowEmptyArchive: $allowEmptyArchive, " +
+                "onlyIfSuccessful: $onlyIfSuccessful",
         )
     }
 }
