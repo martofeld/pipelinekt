@@ -4,6 +4,7 @@ import com.code42.jenkins.pipelinekt.core.Agent
 import com.code42.jenkins.pipelinekt.core.StageOption
 import com.code42.jenkins.pipelinekt.core.Tool
 import com.code42.jenkins.pipelinekt.core.When
+import com.code42.jenkins.pipelinekt.core.stage.MatrixBody
 import com.code42.jenkins.pipelinekt.core.stage.Stage
 import com.code42.jenkins.pipelinekt.core.step.Step
 import com.code42.jenkins.pipelinekt.core.vars.ext.strDouble
@@ -17,6 +18,7 @@ open class NestedStageContext(
     val agentContext: SingletonDslContext<Agent> = SingletonDslContext(),
     val stepContext: DslContext<Step> = DslContext(),
     val nestedStageContext: StageWrapperContext<NestedStageContext>,
+    val matrixContext: MatrixContext,
     val postContext: PostContext = PostContext(),
     val whenContext: DslContext<When> = DslContext(),
     val toolContext: DslContext<Tool> = DslContext(),
@@ -41,13 +43,8 @@ open class NestedStageContext(
         throw NotImplementedError("Nested Parallel stages not implemented in Jenkins")
     }
 
-    /**
-     * This method is here to prevent calling parallel in nested stages.  This method should never be invoked.
-     *
-     * Matrix stages are only valid from the top level
-     */
     override fun matrix(matrixBlock: MatrixContext.() -> Unit) {
-        throw NotImplementedError("Nested matrix stages not implemented in Jenkins")
+        matrixContext.matrixBlock()
     }
 
     override fun agent(agentBlock: SingletonDslContext<Agent>.() -> Unit) {
@@ -73,27 +70,50 @@ open class NestedStageContext(
     override fun toStage(name: String): Stage {
         val steps = stepContext.drainAll()
         val sequentialStages = nestedStageContext.drainAll()
+        val matrixStages = matrixContext.nestedStageContext.drainAll()
 
-        if (sequentialStages.size > 0) {
-            return Stage.Sequence(
-                name.strDouble(),
-                sequentialStages,
-                agentContext.drainAll().firstOrNull(),
-                whenContext.drainAll(),
-                toolContext.drainAll(),
-                optionContext.drainAll(),
-                postContext.toPost(),
-            )
-        } else {
-            return Stage.Steps(
-                name.strDouble(),
-                steps.toStep(),
-                agentContext.drainAll().firstOrNull(),
-                whenContext.drainAll(),
-                toolContext.drainAll(),
-                optionContext.drainAll(),
-                postContext.toPost(),
-            )
+        require(!(sequentialStages.isNotEmpty() && matrixStages.isNotEmpty())) {
+            "stage \"$name\" cannot use both `stages { }` and `matrix { }`; put the matrix in its own child stage."
+        }
+
+        return when {
+            sequentialStages.isNotEmpty() ->
+                Stage.Sequence(
+                    name.strDouble(),
+                    sequentialStages,
+                    agentContext.drainAll().firstOrNull(),
+                    whenContext.drainAll(),
+                    toolContext.drainAll(),
+                    optionContext.drainAll(),
+                    postContext.toPost(),
+                )
+            matrixStages.isNotEmpty() ->
+                Stage.Matrix(
+                    name.strDouble(),
+                    MatrixBody(
+                        matrixContext.axesContext.drainAll(),
+                        matrixContext.excludesContext.drainAll(),
+                        matrixStages,
+                        matrixContext.agentContext.drainAll().firstOrNull(),
+                        matrixContext.whenContext.drainAll(),
+                        matrixContext.toolContext.drainAll(),
+                        matrixContext.optionContext.drainAll(),
+                        matrixContext.postContext.toPost(),
+                    ),
+                    whenContext.drainAll(),
+                    optionContext.drainAll(),
+                    postContext.toPost(),
+                )
+            else ->
+                Stage.Steps(
+                    name.strDouble(),
+                    steps.toStep(),
+                    agentContext.drainAll().firstOrNull(),
+                    whenContext.drainAll(),
+                    toolContext.drainAll(),
+                    optionContext.drainAll(),
+                    postContext.toPost(),
+                )
         }
     }
 }

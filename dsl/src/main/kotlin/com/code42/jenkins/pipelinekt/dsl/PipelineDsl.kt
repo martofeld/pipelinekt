@@ -157,7 +157,12 @@ data class PipelineDsl(
         afterRemoteStagePost,
         remoteStageOptions,
         defaultAgent,
-        { NestedStageContext(nestedStageContext = nestedStageWrapperContext()) },
+        {
+            NestedStageContext(
+                nestedStageContext = nestedStageWrapperContext(),
+                matrixContext = MatrixContext(nestedStageWrapperContext()),
+            )
+        },
         LinkedBlockingDeque(),
     )
 

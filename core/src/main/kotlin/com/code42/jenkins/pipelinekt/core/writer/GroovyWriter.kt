@@ -114,6 +114,15 @@ data class GroovyWriter(val writer: PrintWriter, val indent: Int = 0, val contex
         writer.flush()
     }
 
+    fun write(string: String) {
+        writer.append(string)
+    }
+
+    fun writeIndented(string: String) {
+        writer.printIndent()
+        writer.append(string)
+    }
+
     /**
      * print the indent
      */

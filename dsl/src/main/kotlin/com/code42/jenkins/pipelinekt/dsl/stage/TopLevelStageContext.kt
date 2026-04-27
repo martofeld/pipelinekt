@@ -68,6 +68,10 @@ open class TopLevelStageContext(
         val parallelStages = parallelStageContext.drainAll()
         val matrixStages = matrixContext.nestedStageContext.drainAll()
 
+        require(!(sequentialStages.isNotEmpty() && matrixStages.isNotEmpty())) {
+            "stage \"$name\" cannot use both `stages { }` and `matrix { }`; put the matrix in its own child stage."
+        }
+
         if (sequentialStages.size > 0) {
             return Stage.Sequence(
                 name.strDouble(),

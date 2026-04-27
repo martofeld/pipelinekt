@@ -143,4 +143,42 @@ class MatrixStageDslTest {
         )
         assertEquals(expected, pipeline)
     }
+
+    @Test
+    fun matrix_under_nested_sequential_stage_includes_axes() {
+        val pipelineDsl = PipelineDsl(defaultEnvironment = {}, defaultBuildOptions = {})
+        val pipeline = pipelineDsl.pipeline(pipelineBlock = {
+            stages {
+                stage("Outer") {
+                    stages {
+                        stage("Matrix host") {
+                            matrix {
+                                axes {
+                                    axis("CH", listOf("1", "2"))
+                                }
+                                stages {
+                                    stage("work") {
+                                        steps {
+                                            sh("./x.sh")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        val outer = pipeline.stages.single() as Stage.Sequence
+        val matrixStage = outer.stages.single() as Stage.Matrix
+        assertEquals("Matrix host".strDouble(), matrixStage.name)
+        assertEquals(1, matrixStage.matrixBody.axes.size)
+        assertEquals(listOf("CH".strDouble()), matrixStage.matrixBody.axes.map { it.name })
+        assertEquals(
+            listOf("1".strDouble(), "2".strDouble()),
+            matrixStage.matrixBody.axes.single().values,
+        )
+        assertEquals(1, matrixStage.matrixBody.stages.size)
+    }
 }
