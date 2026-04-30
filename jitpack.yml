@@ -1,0 +1,9 @@
+# JitPack's default JVM is too old for Gradle 9.x (requires 17+) and this project's
+# Kotlin/Java 17 toolchain. Install Temurin 17 via SDKMAN so ./gradlew uses JDK 17.
+jdk:
+  - openjdk17
+
+before_install:
+  - sdk update
+  - sdk install java 17.0.12-tem
+  - sdk use java 17.0.12-tem
