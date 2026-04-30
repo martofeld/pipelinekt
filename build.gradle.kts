@@ -1,6 +1,8 @@
 import com.code42.version.Version
 import com.diffplug.gradle.spotless.SpotlessExtension
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+import java.net.URL
 
 val kotlinVersion = "2.3.20"
 
@@ -147,9 +149,16 @@ subprojects {
             }
         }
 
+        val kdocJar by tasks.registering(Jar::class) {
+            group = JavaBasePlugin.DOCUMENTATION_GROUP
+            dependsOn(tasks.named("dokkaGenerate"))
+            archiveClassifier.set("javadoc")
+            from(layout.buildDirectory.dir("kdoc"))
+        }
+
         artifacts {
             add("archives", sourcesJar)
-            add("archives", tasks.named("dokkaGenerate"))
+            add("archives", kdocJar)
         }
 
         tasks.withType<JacocoReport> {
@@ -191,7 +200,7 @@ subprojects {
                     artifactId = base.archivesName.get()
                     from(components["java"])
                     artifact(sourcesJar)
-                    artifact(tasks.named("dokkaGenerate"))
+                    artifact(kdocJar)
                 }
             }
             repositories {
