@@ -1,5 +1,6 @@
 package com.code42.jenkins.pipelinekt.core
 
+import com.code42.jenkins.pipelinekt.core.agent.DockerAgent
 import com.code42.jenkins.pipelinekt.core.stage.Stage
 import com.code42.jenkins.pipelinekt.core.vars.ext.strDouble
 import com.code42.jenkins.pipelinekt.core.writer.GroovyWriter
@@ -20,6 +21,7 @@ class PipelineWorkspaceTest {
                 ),
             ),
             useMultibranchWorkspace = true,
+            agent = DockerAgent.Image("testimage:lts".strDouble()),
         )
 
         val stringWriter = StringWriter()
@@ -50,6 +52,7 @@ class PipelineWorkspaceTest {
                 ),
             ),
             customWorkspace = "/my/custom/workspace",
+            agent = DockerAgent.Image("testimage:lts".strDouble()),
         )
 
         val stringWriter = StringWriter()

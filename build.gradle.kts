@@ -1,21 +1,21 @@
 import com.code42.version.Version
 import com.diffplug.gradle.spotless.SpotlessExtension
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
 
-val kotlinVersion = "1.9.23"
+val kotlinVersion = "2.3.20"
 
 plugins {
     base
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.3.20"
     id("idea")
     `maven-publish`
     id("com.diffplug.spotless").version("6.25.0")
-    id("org.jetbrains.dokka").version("1.9.0")
+    id("org.jetbrains.dokka").version("2.2.0")
     id("io.gitlab.arturbosch.detekt").version("1.23.0")
     jacoco
 }
-val githubRepo = System.getenv("GITHUB_REPOSITORY") ?: "code42/pipelinekt"
-val groupName = "com.code42.jenkins"
+val githubRepo = System.getenv("GITHUB_REPOSITORY") ?: "martofeld/pipelinekt"
+val groupName = "com.martofeld.jenkins"
 val baseProjectName = "pipelinekt"
 val publishedProjects = listOf("core", "internal", "dsl")
 val activeProjects = publishedProjects
@@ -26,7 +26,7 @@ val kotlinRules = mapOf(
 )
 
 allprojects {
-    group = "com.code42"
+    group = "com.martofeld"
     version = Version.getVersion()
 
     repositories {
@@ -35,8 +35,8 @@ allprojects {
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "17" // Using JDK 17 which is supported by detekt
+        compilerOptions {
+            jvmTarget.set(JVM_17)
         }
     }
 
@@ -63,7 +63,7 @@ spotless {
 }
 
 tasks {
-    create("incrementVersion") {
+    register("incrementVersion") {
         doLast {
             Version.incrementVersion()
         }
@@ -98,13 +98,8 @@ subprojects {
 
     tasks.withType<Test> {
         // Temporarily disable tests until we update them
-        enabled = false
-    }
-
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        if (this.name.contains("Test")) {
-            enabled = false
-        }
+        enabled = true
+        useJUnit()
     }
 
     if (publishedProjects.contains(project.name)) {
@@ -129,7 +124,7 @@ subprojects {
             }
         }
 
-        val sourcesJar by tasks.creating(Jar::class) {
+        val sourcesJar by tasks.registering(Jar::class) {
             archiveClassifier.set("sources")
             from(sourceSets.main.get().allSource)
         }
@@ -138,29 +133,23 @@ subprojects {
             toolVersion = "0.8.7"
         }
 
-        tasks.register("dokkaKdoc", org.jetbrains.dokka.gradle.DokkaTask::class) {
-            outputDirectory.set(file("$buildDir/kdoc"))
-            dokkaSourceSets {
-                named("main") {
-                    sourceLink {
-                        localDirectory.set(file("./"))
-                        remoteUrl.set(uri("https://github.com/$githubRepo/tree/master").toURL())
-                        remoteLineSuffix.set("#L")
-                    }
+        dokka {
+            moduleName.set(project.name)
+            dokkaPublications.html {
+                suppressInheritedMembers.set(true)
+            }
+            dokkaSourceSets.main {
+                sourceLink {
+                    localDirectory.set(file("./"))
+                    remoteUrl("https://github.com/$githubRepo/tree/master")
+                    remoteLineSuffix.set("#L")
                 }
             }
         }
 
-        val kdocJar by tasks.creating(Jar::class) {
-            group = JavaBasePlugin.DOCUMENTATION_GROUP
-            dependsOn(tasks.named("dokkaKdoc"))
-            archiveClassifier.set("javadoc")
-            from("$buildDir/kdoc")
-        }
-
         artifacts {
             add("archives", sourcesJar)
-            add("archives", kdocJar)
+            add("archives", tasks.named("dokkaGenerate"))
         }
 
         tasks.withType<JacocoReport> {
@@ -168,7 +157,7 @@ subprojects {
                 xml.required.set(false)
                 csv.required.set(false)
                 html.required.set(true)
-                html.outputLocation.set(file("$buildDir/reports/coverage"))
+                html.outputLocation.set(layout.buildDirectory.dir("reports/coverage"))
             }
         }
 
@@ -202,7 +191,7 @@ subprojects {
                     artifactId = base.archivesName.get()
                     from(components["java"])
                     artifact(sourcesJar)
-                    artifact(kdocJar)
+                    artifact(tasks.named("dokkaGenerate"))
                 }
             }
             repositories {

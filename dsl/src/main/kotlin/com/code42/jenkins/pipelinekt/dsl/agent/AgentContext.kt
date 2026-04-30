@@ -101,7 +101,7 @@ fun SingletonDslContext<in KubernetesAgent>.kubernetesYamlFile(
         label?.strDouble(),
         defaultContainer?.strDouble(),
         customWorkspace?.strDouble(),
-        cloud?.strDouble()
+        cloud?.strDouble(),
     )
 }
 

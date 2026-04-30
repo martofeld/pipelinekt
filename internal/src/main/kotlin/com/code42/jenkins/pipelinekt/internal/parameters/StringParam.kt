@@ -26,7 +26,9 @@ data class StringParam(
 
     override fun toGroovy(writer: GroovyWriter) {
         if (trim) {
-            writer.writeln("string(defaultValue: ${defaultValue.toGroovy()}, description: ${description.toGroovy()}, name: ${name.toGroovy()}, trim: true)")
+            writer.writeln(
+                "string(defaultValue: ${defaultValue.toGroovy()}, description: ${description.toGroovy()}, name: ${name.toGroovy()}, trim: true)",
+            )
         } else {
             writer.writeln("string(defaultValue: ${defaultValue.toGroovy()}, description: ${description.toGroovy()}, name: ${name.toGroovy()})")
         }

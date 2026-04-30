@@ -10,11 +10,7 @@ import com.code42.jenkins.pipelinekt.internal.step.scripted.ScriptedStage
 /**
  * Scripted `stage('Name') { ... }` or `stage(name: 'Name', concurrency: n) { ... }` (see [ScriptedStage]).
  */
-fun DslContext<Step>.scriptedStage(
-    name: String,
-    concurrency: Int? = null,
-    block: DslContext<Step>.() -> Unit,
-) {
+fun DslContext<Step>.scriptedStage(name: String, concurrency: Int? = null, block: DslContext<Step>.() -> Unit) {
     scriptedStage(name.strSingle(), concurrency, block)
 }
 

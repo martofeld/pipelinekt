@@ -36,9 +36,13 @@ class PropertiesParametersTest : GroovyScriptTest() {
             "script {\n" +
                 "\tproperties([\n" +
                 "\t\tparameters([\n" +
-                "\t\t\tgitParameter(name: \"git_branch\", branch: \"\", branchFilter: \".*\", defaultValue: \"origin/develop\", quickFilterEnabled: true, selectedValue: \"DEFAULT\", sortMode: \"DESCENDING_SMART\", tagFilter: \"*\", type: \"PT_BRANCH\"),\n" +
-                "\t\t\tchoice(name: \"product\", description: \"\", choices: [\"sportybet\"]),\n" +
-                "\t\t\tbooleanParam(name: \"is_google_play_version\", defaultValue: false),\n" +
+                "\t\t\tchoice(\n" +
+                "\t\t\t\tname: \"product\",\n" +
+                "\t\t\t\tdescription: \"\",\n" +
+                "\t\t\t\tchoices: [\n" +
+                "\t\t\t\t\t\"sportybet\"\n" +
+                "\t\t\t\t]),\n" +
+                "\t\t\tbooleanParam(defaultValue: false, description: \"\", name: \"is_google_play_version\"),\n" +
                 "\t\t\tstring(defaultValue: \" \", description: \"\", name: \"server_replica\", trim: true)\n" +
                 "\t\t])\n" +
                 "\t])\n" +
