@@ -12,8 +12,14 @@ import com.code42.jenkins.pipelinekt.core.writer.GroovyWriter
  * @param credentials the credentials to inject
  * @param steps the steps to inject
  */
-data class WithCredentials(val credentials: JenkinsCredentials, override val steps: Step) : DeclarativeStep, NestedStep {
+data class WithCredentials(val credentials: List<JenkinsCredentials>, override val steps: Step) : DeclarativeStep, NestedStep {
+
     override fun toGroovy(writer: GroovyWriter) {
-        writer.closure(listOf("withCredentials([[") + credentials.toGroovy().map { "${writer.indentStr}$it" } + "]])", steps::toGroovy)
+        writer.closure(
+            listOf("withCredentials([") + credentials.joinToString(",\n", prefix = "[\n", postfix = "\n]") {
+                it.toGroovy().joinToString("\n")
+            } + "])",
+            steps::toGroovy
+        )
     }
 }

@@ -6,6 +6,6 @@ import com.code42.jenkins.pipelinekt.core.writer.ext.toStep
 import com.code42.jenkins.pipelinekt.dsl.DslContext
 import com.code42.jenkins.pipelinekt.internal.step.declarative.WithCredentials
 
-fun DslContext<Step>.withCredentials(credentials: JenkinsCredentials, steps: DslContext<Step>.() -> Unit) {
-    add(WithCredentials(credentials, DslContext.into(steps).toStep()))
+fun DslContext<Step>.withCredentials(vararg credentials: JenkinsCredentials, steps: DslContext<Step>.() -> Unit) {
+    add(WithCredentials(credentials.toList(), DslContext.into(steps).toStep()))
 }

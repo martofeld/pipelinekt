@@ -102,5 +102,5 @@ data class GradleBuildDsl(
     )
 
     private fun DslContext<Step>.artifactoryAuthenticated(steps: DslContext<Step>.() -> Unit) =
-        gradleCredentials?.let { withCredentials(it, steps) } ?: steps()
+        gradleCredentials?.let { withCredentials(it, steps = steps) } ?: steps()
 }

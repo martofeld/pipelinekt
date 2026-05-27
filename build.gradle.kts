@@ -28,7 +28,7 @@ val kotlinRules = mapOf(
 )
 
 allprojects {
-    group = "com.martofeld"
+    group = "com.github.martofeld"
     version = Version.getVersion()
 
     repositories {
