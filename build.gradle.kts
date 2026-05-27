@@ -1,8 +1,6 @@
 import com.code42.version.Version
 import com.diffplug.gradle.spotless.SpotlessExtension
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-import java.net.URL
 
 val kotlinVersion = "2.3.20"
 

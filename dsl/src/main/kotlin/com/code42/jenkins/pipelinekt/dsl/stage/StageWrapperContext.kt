@@ -145,7 +145,7 @@ data class StageWrapperContext<I : StageContext>(
     }
 
     private fun applyBeforeAndAfterRemoteSteps(name: String, steps: Step, inline: Boolean): Step {
-        return if(inline) {
+        return if (inline) {
             DslContext.into<Step> {
                 beforeRemoteStage()
                 add(steps)
