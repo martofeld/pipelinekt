@@ -68,7 +68,7 @@ data class StageWrapperContext<I : StageContext>(
     }
 
     // TODO, move remote stage and local stage into stage
-    fun stage(name: String, stageBlock: I.() -> Unit) {
+    fun stage(name: String, inline: Boolean = false, stageBlock: I.() -> Unit) {
         val stageContext = stageContext()
         stageContext.stageBlock()
         val stage = stageContext.toStage(name)
@@ -78,7 +78,7 @@ data class StageWrapperContext<I : StageContext>(
                 is Stage.Steps ->
                     stage.copy(
                         options = getRemoteStageOptions(stage.options),
-                        steps = applyBeforeAndAfterRemoteSteps(name, stage.steps),
+                        steps = applyBeforeAndAfterRemoteSteps(name, stage.steps, inline),
                         post = applyBeforeAndAfterRemotePost(stage.post),
                     )
                 else -> stage
@@ -144,13 +144,21 @@ data class StageWrapperContext<I : StageContext>(
         return DslContext.into<Step> { invoke(method) }.toStep()
     }
 
-    private fun applyBeforeAndAfterRemoteSteps(name: String, steps: Step): Step {
-        val method = method(name.replace("\\W".toRegex(), "_")) {
-            beforeRemoteStage()
-            add(steps)
-            afterRemoteStage()
-        }
+    private fun applyBeforeAndAfterRemoteSteps(name: String, steps: Step, inline: Boolean): Step {
+        return if(inline) {
+            DslContext.into<Step> {
+                beforeRemoteStage()
+                add(steps)
+                afterRemoteStage()
+            }.toStep()
+        } else {
+            val method = method(name.replace("\\W".toRegex(), "_")) {
+                beforeRemoteStage()
+                add(steps)
+                afterRemoteStage()
+            }
 
-        return DslContext.into<Step> { invoke(method) }.toStep()
+            DslContext.into<Step> { invoke(method) }.toStep()
+        }
     }
 }
