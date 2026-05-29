@@ -16,7 +16,7 @@ data class SshUserPrivateKey(
             "keyFileVariable: '${keyFileVariable.name}',",
             usernameVariable?.let { "usernameVariable: '${it.name}'," },
             passphraseVariable?.let { "passphraseVariable: '${it.name}'" },
-            "]"
+            "]",
         )
             .mapNotNull { it }
     }

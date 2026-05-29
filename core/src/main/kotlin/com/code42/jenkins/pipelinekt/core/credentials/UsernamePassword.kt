@@ -14,7 +14,7 @@ data class UsernamePassword(
             "credentialsId: ${credentialsId.toGroovy()},",
             "usernameVariable: ${usernameVariable.toGroovy()},",
             "passwordVariable: ${passwordVariable.toGroovy()}",
-            "]"
+            "]",
         )
     }
 }

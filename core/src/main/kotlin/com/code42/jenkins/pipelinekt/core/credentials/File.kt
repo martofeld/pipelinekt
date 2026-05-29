@@ -9,7 +9,7 @@ data class File(val credentialsId: Var, val variable: Var.Literal.Str) : Jenkins
             "\$class: 'FileBinding',",
             "credentialsId: ${credentialsId.toGroovy()},",
             "variable: ${variable.toGroovy()}",
-            "]"
+            "]",
         )
     }
 }
