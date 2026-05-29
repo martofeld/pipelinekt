@@ -11,10 +11,12 @@ class JenkinsCredentialsTest {
         val usernameVariable = "CREDS_USERNAME".strSingle()
         val passwordVariable = "CREDS_PASSWORD".strSingle()
         val expected = listOf(
+            "[",
             "\$class: 'UsernamePasswordMultiBinding',",
             "credentialsId: ${credentialsId.toGroovy()},",
             "usernameVariable: ${usernameVariable.toGroovy()},",
             "passwordVariable: ${passwordVariable.toGroovy()}",
+            "]",
         )
         val actual = UsernamePassword(credentialsId, usernameVariable, passwordVariable).toGroovy()
         assertEquals(expected, actual)
@@ -24,9 +26,11 @@ class JenkinsCredentialsTest {
         val credentialsId = "my-creds".strSingle()
         val variable = "CREDS_USERNAME".strSingle()
         val expected = listOf(
+            "[",
             "\$class: 'StringBinding',",
             "credentialsId: ${credentialsId.toGroovy()},",
             "variable: ${variable.toGroovy()}",
+            "]",
         )
         val actual = Text(credentialsId, variable).toGroovy()
         assertEquals(expected, actual)
@@ -36,9 +40,11 @@ class JenkinsCredentialsTest {
         val credentialsId = "my-creds".strSingle()
         val variable = "CREDS_USERNAME".strSingle()
         val expected = listOf(
+            "[",
             "\$class: 'FileBinding',",
             "credentialsId: ${credentialsId.toGroovy()},",
             "variable: ${variable.toGroovy()}",
+            "]",
         )
         val actual = File(credentialsId, variable).toGroovy()
         assertEquals(expected, actual)
@@ -54,11 +60,13 @@ class JenkinsCredentialsTest {
 
         assertEquals(
             listOf(
+                "[",
                 "\$class: 'SSHUserPrivateKeyBinding',",
                 "credentialsId: ${credentialsId.toGroovy()},",
                 "keyFileVariable: '${keyFileVariable.name}',",
                 "usernameVariable: '${usernameVariable.name}',",
                 "passphraseVariable: '${passphraseVariable.name}'",
+                "]",
             ),
             actual,
         )
@@ -72,9 +80,11 @@ class JenkinsCredentialsTest {
 
         assertEquals(
             listOf(
+                "[",
                 "\$class: 'SSHUserPrivateKeyBinding',",
                 "credentialsId: ${credentialsId.toGroovy()},",
                 "keyFileVariable: '${keyFileVariable.name}',",
+                "]",
             ),
             actual,
         )
