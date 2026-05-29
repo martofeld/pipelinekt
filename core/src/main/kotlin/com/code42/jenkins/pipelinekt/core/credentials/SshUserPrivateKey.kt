@@ -10,11 +10,13 @@ data class SshUserPrivateKey(
 ) : JenkinsCredentials {
     override fun toGroovy(): List<String> {
         return listOf(
+            "[",
             "\$class: 'SSHUserPrivateKeyBinding',",
             "credentialsId: ${credentialsId.toGroovy()},",
             "keyFileVariable: '${keyFileVariable.name}',",
             usernameVariable?.let { "usernameVariable: '${it.name}'," },
             passphraseVariable?.let { "passphraseVariable: '${it.name}'" },
+            "]"
         )
             .mapNotNull { it }
     }

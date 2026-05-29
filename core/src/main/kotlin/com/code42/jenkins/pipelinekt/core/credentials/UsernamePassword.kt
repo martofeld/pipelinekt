@@ -9,10 +9,12 @@ data class UsernamePassword(
 ) : JenkinsCredentials {
     override fun toGroovy(): List<String> {
         return listOf(
+            "[",
             "\$class: 'UsernamePasswordMultiBinding',",
             "credentialsId: ${credentialsId.toGroovy()},",
             "usernameVariable: ${usernameVariable.toGroovy()},",
             "passwordVariable: ${passwordVariable.toGroovy()}",
+            "]"
         )
     }
 }

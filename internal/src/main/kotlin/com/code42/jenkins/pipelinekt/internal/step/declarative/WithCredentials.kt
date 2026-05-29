@@ -16,7 +16,7 @@ data class WithCredentials(val credentials: List<JenkinsCredentials>, override v
 
     override fun toGroovy(writer: GroovyWriter) {
         writer.closure(
-            listOf("withCredentials([") + credentials.joinToString(",\n", prefix = "[\n", postfix = "\n]") {
+            listOf("withCredentials([") + credentials.joinToString(",\n") {
                 it.toGroovy().joinToString("\n")
             } + "])",
             steps::toGroovy,
