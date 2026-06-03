@@ -1,6 +1,7 @@
 package com.code42.jenkins.pipelinekt.dsl.agent
 
 import com.code42.jenkins.pipelinekt.core.agent.KubernetesAgent
+import com.code42.jenkins.pipelinekt.core.vars.ext.multline
 import com.code42.jenkins.pipelinekt.core.vars.ext.strDouble
 import com.code42.jenkins.pipelinekt.dsl.PipelineDsl
 import com.code42.jenkins.pipelinekt.dsl.step.declarative.echo
@@ -46,6 +47,41 @@ class AgentDslTest {
         }
         val expected = KubernetesAgent(
             yamlFile = "k8s/agent.yaml".strDouble(),
+            label = "ci".strDouble(),
+            defaultContainer = "jnlp".strDouble(),
+        )
+        assertEquals(expected, pipeline.agent)
+    }
+
+    @Test
+    fun pipeline_kubernetesYaml() {
+        val yamlContent = """
+            apiVersion: v1
+            kind: Pod
+            spec:
+              containers:
+              - name: jnlp
+                image: jenkins/inbound-agent
+        """.trimIndent()
+        val dsl = PipelineDsl(defaultEnvironment = {}, defaultBuildOptions = {})
+        val pipeline = dsl.pipeline {
+            agent {
+                kubernetesYaml(
+                    yaml = yamlContent,
+                    label = "ci",
+                    defaultContainer = "jnlp",
+                )
+            }
+            stages {
+                stage("Build") {
+                    steps {
+                        echo("ok")
+                    }
+                }
+            }
+        }
+        val expected = KubernetesAgent(
+            yaml = yamlContent.multline(),
             label = "ci".strDouble(),
             defaultContainer = "jnlp".strDouble(),
         )

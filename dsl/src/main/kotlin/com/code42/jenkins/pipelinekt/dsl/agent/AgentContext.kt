@@ -5,6 +5,7 @@ import com.code42.jenkins.pipelinekt.core.agent.DockerAgent
 import com.code42.jenkins.pipelinekt.core.agent.KubernetesAgent
 import com.code42.jenkins.pipelinekt.core.vars.Var
 import com.code42.jenkins.pipelinekt.core.vars.ext.boolVar
+import com.code42.jenkins.pipelinekt.core.vars.ext.multline
 import com.code42.jenkins.pipelinekt.core.vars.ext.strDouble
 import com.code42.jenkins.pipelinekt.dsl.SingletonDslContext
 import com.code42.jenkins.pipelinekt.internal.agent.Label
@@ -54,8 +55,15 @@ fun SingletonDslContext<in DockerAgent>.dockerFile(
     reuseNode: Boolean? = null,
 ) {
     dockerFile(
-        filename.strDouble(), dir?.strDouble(), additionalBuildArgs?.strDouble(), args?.strDouble(),
-        label?.strDouble(), customWorkspace?.strDouble(), registryUrl?.strDouble(), registryCredentialsId?.strDouble(), reuseNode?.boolVar(),
+        filename.strDouble(),
+        dir?.strDouble(),
+        additionalBuildArgs?.strDouble(),
+        args?.strDouble(),
+        label?.strDouble(),
+        customWorkspace?.strDouble(),
+        registryUrl?.strDouble(),
+        registryCredentialsId?.strDouble(),
+        reuseNode?.boolVar(),
     )
 }
 
@@ -70,7 +78,19 @@ fun SingletonDslContext<in DockerAgent>.dockerFile(
     registryCredentialsId: Var.Literal.Str? = null,
     reuseNode: Var.Literal.Bool? = null,
 ) {
-    add(DockerAgent.File(filename, dir, additionalBuildArgs, args, label, customWorkspace, registryUrl, registryCredentialsId, reuseNode))
+    add(
+        DockerAgent.File(
+            filename,
+            dir,
+            additionalBuildArgs,
+            args,
+            label,
+            customWorkspace,
+            registryUrl,
+            registryCredentialsId,
+            reuseNode,
+        ),
+    )
 }
 
 fun SingletonDslContext<Agent>.label(name: String) {
@@ -112,5 +132,33 @@ fun SingletonDslContext<in KubernetesAgent>.kubernetesYamlFile(
     customWorkspace: Var.Literal.Str? = null,
     cloud: Var.Literal.Str? = null,
 ) {
-    add(KubernetesAgent(file, label, defaultContainer, customWorkspace, cloud))
+    add(
+        KubernetesAgent(
+            yamlFile = file,
+            yaml = null,
+            label = label,
+            defaultContainer = defaultContainer,
+            customWorkspace = customWorkspace,
+            cloud = cloud,
+        ),
+    )
+}
+
+fun SingletonDslContext<in KubernetesAgent>.kubernetesYaml(
+    yaml: String,
+    label: String? = null,
+    defaultContainer: String? = null,
+    customWorkspace: String? = null,
+    cloud: String? = null,
+) {
+    add(
+        KubernetesAgent(
+            yamlFile = null,
+            yaml = yaml.multline(),
+            label = label?.strDouble(),
+            defaultContainer = defaultContainer?.strDouble(),
+            customWorkspace = customWorkspace?.strDouble(),
+            cloud = cloud?.strDouble(),
+        ),
+    )
 }
