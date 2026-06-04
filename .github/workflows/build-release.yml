@@ -40,19 +40,15 @@ jobs:
       - name: Gradle Publish And Increment
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: publish incrementVersion -x detekt
+          arguments: incrementVersion -x detekt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CI: true
       #Post Release
       - name: Commit version increment
         run: |
-          git config --local user.email "code42.release.automation@github.com"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "Release Automation"
           git add version.txt
-          git commit -m "Update version"
-      - name: Push Version increment
-        uses: ad-m/github-push-action@v0.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          git commit -m "Update version [ci skip]"
+          git push
