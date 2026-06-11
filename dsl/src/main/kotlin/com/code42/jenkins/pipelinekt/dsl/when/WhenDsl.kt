@@ -113,9 +113,11 @@ fun DslContext<When>.expression(statementBlock: () -> BooleanStatement) {
     add(Expression(statementBlock()))
 }
 
-fun DslContext<When>.not(notBlock: SingletonDslContext<When>.() -> Unit) {
-    SingletonDslContext.into(notBlock)
-        ?.let { add(Not(it)) }
+fun DslContext<When>.not(notBlock: DslContext<When>.() -> Unit) {
+    DslContext.into(notBlock)
+        .takeIf { it.size == 1 }
+        ?.let { add(Not(it.first())) }
+        ?: throw IllegalArgumentException("Not expression must have exactly one child")
 }
 
 fun DslContext<When>.allOf(allOfBlock: DslContext<When>.() -> Unit) {
