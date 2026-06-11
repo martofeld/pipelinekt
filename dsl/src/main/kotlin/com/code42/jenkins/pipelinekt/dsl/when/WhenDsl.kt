@@ -11,7 +11,6 @@ import com.code42.jenkins.pipelinekt.core.vars.ext.boolVar
 import com.code42.jenkins.pipelinekt.core.vars.ext.environmentVar
 import com.code42.jenkins.pipelinekt.core.vars.ext.strDouble
 import com.code42.jenkins.pipelinekt.dsl.DslContext
-import com.code42.jenkins.pipelinekt.dsl.SingletonDslContext
 import com.code42.jenkins.pipelinekt.internal.`when`.AllOf
 import com.code42.jenkins.pipelinekt.internal.`when`.AnyOf
 import com.code42.jenkins.pipelinekt.internal.`when`.Before
