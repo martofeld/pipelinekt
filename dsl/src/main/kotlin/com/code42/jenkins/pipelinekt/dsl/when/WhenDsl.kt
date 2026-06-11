@@ -25,6 +25,7 @@ import com.code42.jenkins.pipelinekt.internal.`when`.Environment
 import com.code42.jenkins.pipelinekt.internal.`when`.Equals
 import com.code42.jenkins.pipelinekt.internal.`when`.Expression
 import com.code42.jenkins.pipelinekt.internal.`when`.Literal
+import com.code42.jenkins.pipelinekt.internal.`when`.Not
 import com.code42.jenkins.pipelinekt.internal.`when`.Tag
 import com.code42.jenkins.pipelinekt.internal.`when`.TriggeredBy
 
@@ -114,7 +115,7 @@ fun DslContext<When>.expression(statementBlock: () -> BooleanStatement) {
 
 fun DslContext<When>.not(notBlock: SingletonDslContext<When>.() -> Unit) {
     SingletonDslContext.into(notBlock)
-        ?.let(this::add)
+        ?.let { add(Not(it)) }
 }
 
 fun DslContext<When>.allOf(allOfBlock: DslContext<When>.() -> Unit) {
