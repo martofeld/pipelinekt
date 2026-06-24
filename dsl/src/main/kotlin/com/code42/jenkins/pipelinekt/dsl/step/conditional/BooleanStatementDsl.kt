@@ -30,7 +30,11 @@ fun DslContext<Step>.condition(
 ) {
     condition(statement(), ifTrue, otherwise)
 }
-fun DslContext<Step>.condition(statement: BooleanStatement, ifTrue: DslContext<Step>.() -> Unit, otherwise: (DslContext<Step>.() -> Unit)? = { Void }) {
+fun DslContext<Step>.condition(
+    statement: BooleanStatement,
+    ifTrue: DslContext<Step>.() -> Unit,
+    otherwise: (DslContext<Step>.() -> Unit)? = { Void },
+) {
     val ifTrueSteps = DslContext.into(ifTrue).toStep()
     val ifFalseSteps = otherwise?.let { DslContext.into(it).toStep() }
     add(If(statement, ifTrueSteps, ifFalseSteps))

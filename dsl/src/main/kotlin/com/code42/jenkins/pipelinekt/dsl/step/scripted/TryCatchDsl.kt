@@ -20,7 +20,11 @@ fun DslContext<Step>.tryCatch(tryStep: DslContext<Step>.() -> Unit, catchStep: (
     }
 }
 
-fun DslContext<Step>.tryCatchFinally(tryStep: DslContext<Step>.() -> Unit, catchStep: (DslContext<Step>.() -> Unit)?, finallyStep: (DslContext<Step>.() -> Unit)?) {
+fun DslContext<Step>.tryCatchFinally(
+    tryStep: DslContext<Step>.() -> Unit,
+    catchStep: (DslContext<Step>.() -> Unit)?,
+    finallyStep: (DslContext<Step>.() -> Unit)?,
+) {
     val trySteps = DslContext.into(tryStep).toStep()
     val catchSteps = catchStep?.let { DslContext.into(catchStep).toStep() }
     val finallyStep = finallyStep?.let { DslContext.into(finallyStep).toStep() }
