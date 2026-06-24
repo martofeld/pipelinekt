@@ -19,3 +19,20 @@ fun DslContext<Step>.tryCatch(tryStep: DslContext<Step>.() -> Unit, catchStep: (
         add(Try(trySteps, null))
     }
 }
+
+fun DslContext<Step>.tryCatchFinally(tryStep: DslContext<Step>.() -> Unit, catchStep: (DslContext<Step>.() -> Unit)?, finallyStep: (DslContext<Step>.() -> Unit)?) {
+    val trySteps = DslContext.into(tryStep).toStep()
+    val catchSteps = catchStep?.let { DslContext.into(catchStep).toStep() }
+    val finallyStep = finallyStep?.let { DslContext.into(finallyStep).toStep() }
+    add(Try(trySteps, catchSteps, finallyStep))
+}
+
+fun DslContext<Step>.tryFinally(tryStep: DslContext<Step>.() -> Unit, finallyStep: (DslContext<Step>.() -> Unit)?) {
+    val trySteps = DslContext.into(tryStep).toStep()
+    if (finallyStep != null) {
+        val finallySteps = DslContext.into(finallyStep).toStep()
+        add(Try(trySteps, null, finallySteps))
+    } else {
+        add(Try(trySteps, null, null))
+    }
+}

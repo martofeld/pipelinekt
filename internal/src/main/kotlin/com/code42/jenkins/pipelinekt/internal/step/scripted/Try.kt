@@ -9,14 +9,16 @@ import com.code42.jenkins.pipelinekt.core.writer.GroovyWriter
 data class Try(
     val tryStep: Step,
     val catchStep: Step? = null,
+    val finallyStep: Step? = null,
 ) : ScriptedStep, NestedStep {
 
     // I suspect that `steps` is only used by `isEmpty()`, that's why tryStep and catchStep bodies are concatenated
     override val steps: Step
-        get() = tryStep.andThen(catchStep ?: Void)
+        get() = tryStep.andThen(catchStep ?: Void).andThen(finallyStep ?: Void)
 
     override fun scriptedGroovy(writer: GroovyWriter) {
         writer.closure("try", tryStep::toGroovy)
         catchStep?.let { writer.closure("catch(exc)", it::toGroovy) }
+        finallyStep?.let { writer.closure("finally", it::toGroovy) }
     }
 }
